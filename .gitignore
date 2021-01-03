@@ -1,0 +1,10 @@
+.idea
+.env
+.project
+__pycache__
+env
+data
+wheels
+.vscode
+dump
+*.log
