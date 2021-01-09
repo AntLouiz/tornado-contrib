@@ -33,5 +33,15 @@ class MongoModel(Model):
 
         return is_valid
 
+    @classmethod
+    def get_protected_fields(cls):
+        return cls.Options().extras['protected_fields']
+
     class Meta:
         collection_name = 'base'
+
+    class Options:
+        extras = {'protected_fields': [
+                                       '_id',
+                                       'created_at'
+                                    ]}
