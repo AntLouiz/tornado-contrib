@@ -2,20 +2,21 @@ from schematics.types import StringType
 from schematics.models import Model
 from schematics.exceptions import DataError
 from .managers import MongoModelManager
+from motor import MotorDatabase
 
 
 class MongoModel(Model):
     _manager = MongoModelManager
 
-    def __init__(self, db=None, *args, **kwargs):
+    def __init__(self, raw_data=None, *args, **kwargs):
         self.manager = MongoModelManager
 
-        if not isinstance(db, dict):
+        if isinstance(raw_data, MotorDatabase):
+            db = raw_data
             collection_name = self.Meta.collection_name
             collection = db[collection_name]
             self.manager = MongoModelManager(collection)
-
-        raw_data = db
+            raw_data = None
 
         kwargs['strict'] = False
         super().__init__(raw_data, *args, **kwargs)
