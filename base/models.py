@@ -10,13 +10,15 @@ class MongoModel(Model):
     def __init__(self, db=None, *args, **kwargs):
         self.manager = MongoModelManager
 
-        if db:
+        if not isinstance(db, dict):
             collection_name = self.Meta.collection_name
             collection = db[collection_name]
             self.manager = MongoModelManager(collection)
 
+        raw_data = db
+
         kwargs['strict'] = False
-        super().__init__(*args, **kwargs)
+        super().__init__(raw_data, *args, **kwargs)
 
     def is_valid(self, raise_exception=False):
         if raise_exception:
