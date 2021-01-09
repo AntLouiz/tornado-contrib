@@ -1,6 +1,7 @@
 import json
 from bson import json_util
 from bson import ObjectId
+from pymongo import DESCENDING
 from collections import namedtuple
 
 
@@ -31,7 +32,7 @@ class MongoModelManager:
             query_filter['_id'] = ObjectId(has_id_field)
         return query_filter
 
-    async def find(self, query_filter={}, many=True, *args, **kwargs):
+    async def find(self, query_filter={}, many=True, sort=('_id', DESCENDING), *args, **kwargs):
         query_filter = self._parse_query_filter(query_filter)
         count = await self.collection.count_documents(query_filter)
 
@@ -41,6 +42,8 @@ class MongoModelManager:
                 cursor.skip(self.skip)
             if self.limit:
                 cursor.limit(self.limit)
+            if sort:
+                cursor.sort([sort])
 
             results = await cursor.to_list(None)
         else:
