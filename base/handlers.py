@@ -154,7 +154,6 @@ class ModelAPIView(MongoAPIMixin):
 
     async def list(self, *args, **kwargs):
         queryset = await self.get_queryset(*args, **kwargs)
-        data = self.paginate_response(queryset, current_page=self.page, page_size=self.page_size)
         response = self.process_response(queryset)
         response = self.paginate_response(queryset)
         return self.json_response(data=response)
