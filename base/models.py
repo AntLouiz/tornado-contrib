@@ -7,8 +7,14 @@ from .managers import MongoModelManager
 class MongoModel(Model):
     _manager = MongoModelManager
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, db=None, *args, **kwargs):
         self.manager = MongoModelManager
+
+        if db:
+            collection_name = self.Meta.collection_name
+            collection = db[collection_name]
+            self.manager = MongoModelManager(collection)
+
         kwargs['strict'] = False
         super().__init__(*args, **kwargs)
 
