@@ -19,7 +19,7 @@ class MongoModel(Model):
             self.manager = MongoModelManager(collection)
             raw_data = None
 
-        kwargs['strict'] = False
+        # kwargs['strict'] = False
         super().__init__(raw_data, *args, **kwargs)
 
     def is_valid(self, raise_exception=False):

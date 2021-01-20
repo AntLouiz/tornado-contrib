@@ -6,6 +6,7 @@ from contrib.base.fields import (
     ListType,
     UTCDateTimeType
 )
+from schematics.transforms import blacklist
 
 
 class Permission(MongoModel):
@@ -28,21 +29,25 @@ class User(MongoModel):
     """
     https://docs.djangoproject.com/en/3.1/ref/contrib/auth/
     """
-    username = StringType()
-    first_name = StringType()
+
+    username = StringType(required=True)
+    first_name = StringType(required=True)
     last_name = StringType()
-    email = StringType()
-    password = StringType()
+    email = StringType(required=True)
+    password = StringType(required=True)
     groups = ListType(ModelType(Group))
     permissions = ListType(ModelType(Permission))
     is_staff = BooleanType()
-    is_active = BooleanType()
-    is_superuser = BooleanType()
+    is_active = BooleanType(default=True)
+    is_superuser = BooleanType(default=False)
     last_login = UTCDateTimeType()
     date_joined = UTCDateTimeType()
 
     class Meta:
         collection_name = 'users'
+
+    class Options:
+        roles = {'public': blacklist('password')}
 
     def get_username(self):
         pass

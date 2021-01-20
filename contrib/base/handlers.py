@@ -10,7 +10,7 @@ from contrib.base.pagination import Paginator, EmptyPage
 
 
 class MongoAPIMixin(RequestHandler):
-    model = None
+    model = MongoModel
     lookup_field = '_id'
     lookup_url_kwarg = 'id'
     page_size = 20
@@ -52,7 +52,10 @@ class MongoAPIMixin(RequestHandler):
     def get_body_data(self):
         body = self.request.body
         body_data = json.loads(body)
-        return body_data
+        data = self.model(body_data)
+        data.validate()
+
+        return data
 
     async def prepare(self, *args, **kwargs):
         self.query_filter = self.extract_query_args()
@@ -165,7 +168,10 @@ class MongoAPIMixin(RequestHandler):
             raise Finish()
 
     async def get_queryset(self, many=True):
-        queryset = await self.model.manager.find(self.query_filter, many=many)
+        fields_to_remove = self.model.Options.roles['public'].fields
+        queryset = await self.model.manager.find(self.query_filter,
+                                                 many=many,
+                                                 remove_fields=fields_to_remove)
         return queryset
 
 

@@ -23,12 +23,15 @@ class MongoModelManager:
     def __init__(self, collection):
         self.collection = collection
 
-    async def find(self, query_filter={}, many=True, sort=('_id', DESCENDING)):
+    async def find(self, query_filter={}, many=True,
+                   sort=('_id', DESCENDING), remove_fields=[]):
+
         query_filter = self._parse_query_filter(query_filter)
+        fields_to_remove = self._parse_remove_fields(remove_fields)
         count = await self.collection.count_documents(query_filter)
 
         if many:
-            cursor = self.collection.find(query_filter)
+            cursor = self.collection.find(query_filter, fields_to_remove)
             if self.skip:
                 cursor.skip(self.skip)
             if self.limit:
@@ -38,7 +41,7 @@ class MongoModelManager:
 
             results = await cursor.to_list(None)
         else:
-            results = await self.collection.find_one(query_filter)
+            results = await self.collection.find_one(query_filter, fields_to_remove)
 
         parsed_results = self._parse_json(results)
 
@@ -84,3 +87,8 @@ class MongoModelManager:
     def _parse_query_filter(self, query_filter):
         query_filter = self._convert_id_field(query_filter)
         return query_filter
+
+    def _parse_remove_fields(self, fields):
+        if not fields:
+            return None
+        return {field: 0 for field in fields}
