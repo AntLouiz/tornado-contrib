@@ -205,8 +205,5 @@ class ModelAPIView(MongoAPIMixin):
 
         return self.json_response(data, 200)
 
-    async def put(self, *args, **kwargs):
-        pass
-
     async def delete(self, *args, **kwargs):
         pass
