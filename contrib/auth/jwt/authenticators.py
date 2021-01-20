@@ -55,7 +55,6 @@ class JwtAuthentication(BaseAuthentication):
             self.unauthorized_message = {'error': msg}
             return False
 
-        print(queryset.asdict())
         user = User(raw_data=queryset.asdict())
 
         queryset = await revoked_tokens.manager.find({'jti': token})
