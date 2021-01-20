@@ -205,5 +205,12 @@ class ModelAPIView(MongoAPIMixin):
 
         return self.json_response(data, 200)
 
-    async def delete(self, *args, **kwargs):
-        pass
+    async def delete(self, object_id, *args, **kwargs):
+        query_filter = {"_id": object_id}
+        result = await self.model.manager.delete_one(query_filter)
+        if not result:
+            self.json_response({'error': [_("Não foi possível remover o registro.")]}, 400)
+            return
+
+        response = query_filter
+        return self.json_response(data=response, 200)
