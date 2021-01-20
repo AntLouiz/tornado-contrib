@@ -1,4 +1,4 @@
-from base.handlers import ModelAPIView
+from contrib.base.handlers import ModelAPIView
 from core.models import Person, Customer
 from pymongo import ASCENDING
 

@@ -1,5 +1,5 @@
-from base.models import MongoModel
-from schematics.types import StringType, ModelType
+from contrib.base.models import MongoModel
+from contrib.base.fields import StringType, ModelType
 
 
 class Customer(MongoModel):
