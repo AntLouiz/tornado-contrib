@@ -61,3 +61,13 @@ class MongoModelManager:
         result = await self.collection.insert_one(data)
         data['_id'] = str(result.inserted_id)
         return data
+
+    async def update(self, query_filter, data, *args, **kwargs):
+        future = self.collection.update_one(query_filter, data)
+
+        if len(data) > 1:
+            future = self.collection.update_many(query_filter, data)
+
+        result = await future
+
+        return result

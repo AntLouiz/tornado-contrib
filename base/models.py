@@ -35,13 +35,7 @@ class MongoModel(Model):
 
     @classmethod
     def get_protected_fields(cls):
-        return cls.Options().extras['protected_fields']
+        return ['_id']
 
     class Meta:
         collection_name = 'base'
-
-    class Options:
-        extras = {'protected_fields': [
-                                       '_id',
-                                       'created_at'
-                                    ]}

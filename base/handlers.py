@@ -140,6 +140,25 @@ class ModelAPIView(MongoAPIMixin):
 
         return paginated_response
 
+    def validate_body_data(self):
+        data = self.get_body_data()
+        model_attrs = self.model.fields
+        model_protected_attrs = self.model.get_protected_fields()
+
+        data_fields = data.keys()
+        model_fields = model_attrs.keys()
+
+        has_right_fields = all(field in model_fields for field in data_fields)
+        has_protected_fields = any(field in model_protected_attrs for field in data_fields)
+
+        if not has_right_fields:
+            self.json_response({'error': [_("Campo(s) não existente(s) no modelo.")]}, 400)
+            raise Finish()
+
+        if has_protected_fields:
+            self.json_response({'error': [_("Não são permitidas alterações de campos protegidos.")]}, 400)
+            raise Finish()
+
     async def get_queryset(self, many=True, *args, **kwargs):
         queryset = await self.model.manager.find(self.query_filter, many=many)
         return queryset
@@ -175,8 +194,16 @@ class ModelAPIView(MongoAPIMixin):
 
         return self.json_response(data=response, status=201)
 
-    async def patch(self, *args, **kwargs):
-        pass
+    async def patch(self, object_id, *args, **kwargs):
+        self.validate_body_data()
+        data = self.get_body_data()
+
+        result = await self.model.manager.update({"_id": object_id}, data)
+        if not result:
+            self.json_response({'error': [_("Registro não alterado.")]}, 400)
+            return
+
+        return self.json_response(data, 200)
 
     async def put(self, *args, **kwargs):
         pass
