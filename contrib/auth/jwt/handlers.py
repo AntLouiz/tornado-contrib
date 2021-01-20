@@ -1,6 +1,8 @@
+import datetime
 from contrib.base.handlers import CreateAPIView
 from contrib.auth.models import User
 from contrib.auth.jwt.hash import verify_password
+from contrib.auth.jwt.decorators import create_access_token
 
 
 class JWTLoginHandler(CreateAPIView):
@@ -20,6 +22,8 @@ class JWTLoginHandler(CreateAPIView):
         if not queryset.total:
             error_msg = {'error': 'Username or password invalid.'}
             return self.json_response(data=error_msg, status=401)
+
+        user = queryset.asdict()
 
         encrypted_password = user.get('password')
         password_is_valid = verify_password(password, encrypted_password)
