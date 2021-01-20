@@ -52,9 +52,13 @@ class MongoAPIMixin(RequestHandler):
     def get_body_data(self):
         body = self.request.body
         body_data = json.loads(body)
+
+        return body_data
+
+    def get_data(self):
+        body_data = self.get_body_data()
         data = self.model(body_data)
         data.validate()
-
         return data
 
     async def prepare(self, *args, **kwargs):
@@ -203,7 +207,7 @@ class ModelAPIView(MongoAPIMixin):
         return self.json_response(data=response)
 
     async def post(self, *args, **kwargs):
-        post_data = self.get_body_data()
+        post_data = self.get_data()
         model_object = self.model(post_data)
         model_object.is_valid()
 
@@ -214,7 +218,7 @@ class ModelAPIView(MongoAPIMixin):
 
     async def patch(self, object_id):
         self.validate_body_data()
-        data = self.get_body_data()
+        data = self.get_data()
 
         result = await self.model.manager.update({"_id": object_id}, data)
         if not result:
@@ -236,7 +240,7 @@ class ModelAPIView(MongoAPIMixin):
 
 class CreateAPIView(MongoAPIMixin):
     async def post(self, *args, **kwargs):
-        post_data = self.get_body_data()
+        post_data = self.get_data()
         model_object = self.model(post_data)
         model_object.is_valid()
 
