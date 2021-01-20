@@ -184,7 +184,7 @@ class ModelAPIView(MongoAPIMixin):
         response = self.process_response(queryset)
         return self.json_response(data=response)
 
-    async def post(self):
+    async def post(self, *args, **kwargs):
         post_data = self.get_body_data()
         model_object = self.model(post_data)
         model_object.is_valid()
