@@ -3,9 +3,10 @@ from urllib.parse import urlparse, parse_qs, urlencode
 from cached_property import cached_property
 from tornado.web import RequestHandler
 from tornado.web import Finish
-from .models import MongoModel
-from .permissions import BasePermission
-from .pagination import Paginator, EmptyPage
+from contrib.auth.authenticators import BaseAuthentication
+from contrib.base.models import MongoModel
+from contrib.base.permissions import BasePermission
+from contrib.base.pagination import Paginator, EmptyPage
 
 
 class MongoAPIMixin(RequestHandler):
@@ -31,6 +32,7 @@ class ModelAPIView(MongoAPIMixin):
     lookup_url_kwarg = 'id'
     page_size = 20
     pagination_class = Paginator
+    authentication_class = BaseAuthentication
     permissions_classes = [BasePermission]
 
     async def check_permissions(self):
@@ -39,6 +41,12 @@ class ModelAPIView(MongoAPIMixin):
             has_permission = await permission_obj.has_permission(self.request, self)
             if not has_permission:
                 return self.json_response(permission_class.message, 400)
+
+    async def check_authentication(self):
+        auhentication = self.authentication_class()
+        is_authenticated = auhentication.authenticate(self.request, self)
+        if not is_authenticated:
+            return self.json_response(auhentication.unauthorized_message, 401)
 
     def json_response(self, data={}, status=200):
         self.write(json.dumps(data))
@@ -57,6 +65,7 @@ class ModelAPIView(MongoAPIMixin):
         self.model.manager.skip = self.page
         self.model.manager.limit = self.page_size
         await self.check_permissions()
+        await self.check_authentication()
 
     def extract_query_args(self):
         query_args = {}

@@ -19,10 +19,6 @@ class PersonModelAPIView(ModelAPIView):
         )
         return queryset
 
-    @jwt_required
-    async def list(self, *args, **kwargs):
-        super(self).list(args, kwargs)
-
 
 class CustomerModelAPIView(ModelAPIView):
     model = Customer
