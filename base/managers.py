@@ -68,6 +68,7 @@ class MongoModelManager:
         return result
 
     async def delete(self, query_filter):
+        query_filter = self._convert_id_field(query_filter)
         result = await self.collection.delete_one(query_filter)
         return result
 

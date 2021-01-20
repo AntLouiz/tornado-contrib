@@ -182,6 +182,10 @@ class ModelAPIView(MongoAPIMixin):
 
         queryset = await self.get_queryset(many=False)
         response = self.process_response(queryset)
+        if not response:
+            self.json_response({'error': ["Registro não encontrado."]}, 404)
+            return
+
         return self.json_response(data=response)
 
     async def post(self, *args, **kwargs):
@@ -212,5 +216,5 @@ class ModelAPIView(MongoAPIMixin):
             self.json_response({'error': [_("Não foi possível remover o registro.")]}, 400)
             return
 
-        response = query_filter
+        response = {"_id": object_id}
         return self.json_response(data=response, status=200)
