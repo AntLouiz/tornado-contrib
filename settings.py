@@ -24,3 +24,7 @@ logger.addHandler(stdout_handler)
 
 DATABASE_URI = 'mongodb://localhost:27017'
 DATABASE_NAME = 'core'
+
+
+JWT_SECRET = config('JWT_SECRET', '123')
+ACCESS_TOKEN_EXPIRITY_TIME = config('ACCESS_TOKEN_EXPIRITY_TIME', 30)

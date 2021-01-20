@@ -1,6 +1,7 @@
 from contrib.base.handlers import ModelAPIView
 from contrib.auth.models import Permission
 from core.models import Person, Customer
+from contrib.auth.jwt.decorators import jwt_required
 from pymongo import ASCENDING
 
 
@@ -17,6 +18,10 @@ class PersonModelAPIView(ModelAPIView):
             sort=sort_rule
         )
         return queryset
+
+    @jwt_required
+    async def list(self, *args, **kwargs):
+        super(self).list(args, kwargs)
 
 
 class CustomerModelAPIView(ModelAPIView):
