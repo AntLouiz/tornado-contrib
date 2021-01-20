@@ -8,7 +8,7 @@ from pymongo import ASCENDING
 class PersonModelAPIView(ModelAPIView):
     model = Person
     lookup_field = '_id'
-    authentication_class = JwtAuthentication
+    # authentication_class = JwtAuthentication
     lookup_url_kwarg = 'object_id'
 
     async def get_queryset(self, many=True, *args, **kwargs):

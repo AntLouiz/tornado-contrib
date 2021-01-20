@@ -28,3 +28,10 @@ DATABASE_NAME = 'core'
 
 JWT_SECRET = config('JWT_SECRET', '123')
 ACCESS_TOKEN_EXPIRITY_TIME = config('ACCESS_TOKEN_EXPIRITY_TIME', 30)
+ALGORITHM_SCHEMES = [
+    "django_argon2",
+    "django_pbkdf2_sha256",
+    "django_pbkdf2_sha1",
+    "md5_crypt",
+    "django_bcrypt_sha256"
+]

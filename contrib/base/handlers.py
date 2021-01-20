@@ -10,7 +10,13 @@ from contrib.base.pagination import Paginator, EmptyPage
 
 
 class MongoAPIMixin(RequestHandler):
-    model = MongoModel
+    model = None
+    lookup_field = '_id'
+    lookup_url_kwarg = 'id'
+    page_size = 20
+    pagination_class = Paginator
+    authentication_class = BaseAuthentication
+    permissions_classes = [BasePermission]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,16 +30,6 @@ class MongoAPIMixin(RequestHandler):
     @cached_property
     def db(self):
         return self.db_client[self.settings['db_name']]
-
-
-class ModelAPIView(MongoAPIMixin):
-    model = None
-    lookup_field = '_id'
-    lookup_url_kwarg = 'id'
-    page_size = 20
-    pagination_class = Paginator
-    authentication_class = BaseAuthentication
-    permissions_classes = [BasePermission]
 
     async def check_permissions(self):
         for permission_class in self.permissions_classes:
@@ -172,6 +168,9 @@ class ModelAPIView(MongoAPIMixin):
         queryset = await self.model.manager.find(self.query_filter, many=many)
         return queryset
 
+
+class ModelAPIView(MongoAPIMixin):
+
     async def get(self, *args, **kwargs):
         view = self.list
         self.lookup_arg = kwargs.get(self.lookup_url_kwarg)
@@ -227,3 +226,15 @@ class ModelAPIView(MongoAPIMixin):
 
         response = {"_id": object_id}
         return self.json_response(data=response, status=200)
+
+
+class CreateAPIView(MongoAPIMixin):
+    async def post(self, *args, **kwargs):
+        post_data = self.get_body_data()
+        model_object = self.model(post_data)
+        model_object.is_valid()
+
+        new_object = await self.model.manager.create(model_object)
+        response = new_object
+
+        return self.json_response(data=response, status=201)
