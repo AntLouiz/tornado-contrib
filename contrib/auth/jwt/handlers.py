@@ -1,8 +1,10 @@
 import datetime
-from contrib.base.handlers import CreateAPIView
+from contrib.base.handlers import CreateAPIView, RetrieveAPIView
 from contrib.auth.models import User
+from contrib.auth.jwt.models import RevokedToken
 from contrib.auth.jwt.hash import verify_password
 from contrib.auth.jwt.decorators import create_access_token
+from contrib.auth.jwt.authenticators import JwtAuthentication
 
 
 class JWTLoginHandler(CreateAPIView):
@@ -41,8 +43,28 @@ class JWTLoginHandler(CreateAPIView):
         response_data = {'access_token': access_token}
         return self.json_response(response_data, status=200)
 
-class JWTLogoutHandler():
-    pass
+
+class JWTLogoutHandler(RetrieveAPIView):
+    model = RevokedToken
+    authentication_class = JwtAuthentication
+
+    async def get(self, *args, **kwargs):
+        jti = self.jti
+
+        queryset = await self.model.manager.find({"jti": jti})
+        if queryset.total != 0:
+            return self.json_response({'error': 'Current token is revoked.'}, 401)
+
+        token = self.model(raw_data={'jti': jti})
+        await self.model.manager.create(token)
+
+        data = {
+            'message': 'Token revogado'
+        }
+
+        self.json_response(data)
+        return
+
 
 class JWTRefreshHandler():
     pass

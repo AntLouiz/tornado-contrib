@@ -4,7 +4,7 @@ import datetime
 import settings
 from tornado.web import Finish
 from contrib.auth.jwt.models import RevokedToken
-from contrib.auth.jwt.decorators import _extract_token
+from contrib.auth.jwt.decorators import _extract_token, decode_access_token, DATABASE_NAME
 from contrib.auth.models import User
 from contrib.auth.authenticators import BaseAuthentication
 
@@ -48,14 +48,14 @@ class JwtAuthentication(BaseAuthentication):
         revoked_tokens = RevokedToken(database)
         user = User(database)
 
-        user = await user.manager.find({'username': jwt_username, 'is_active': True})
-        if not user:
+        queryset = await user.manager.find({'username': jwt_username, 'is_active': True})
+        if not queryset.total:
             msg = 'User not found'
             self.unauthorized_message = {'error': msg}
             return False
 
-        is_revoked = await revoked_tokens.manager.find_one({'jti': token})
-        if is_revoked:
+        queryset = await revoked_tokens.manager.find({'jti': token})
+        if queryset.total != 0:
             return self.is_unauthorized(msg='Current token was revoked')
 
         if check_refresh:
@@ -64,9 +64,10 @@ class JwtAuthentication(BaseAuthentication):
             if is_refresh_token:
                 return self.is_unauthorized(msg='Invalid access token')
 
-        user.pop('password', None)
+        user = User(queryset.asdict())
+        jwt_user = user.to_primitive()
         token_data = {
-            'jwt_user': user,
+            'jwt_user': jwt_user,
             'jti': token
         }
 

@@ -248,3 +248,13 @@ class CreateAPIView(MongoAPIMixin):
         response = new_object
 
         return self.json_response(data=response, status=201)
+
+
+class RetrieveAPIView(MongoAPIMixin):
+    async def get(self, *args, **kwargs):
+        view = self.list
+        self.lookup_arg = kwargs.get(self.lookup_url_kwarg)
+        if self.lookup_arg:
+            view = self.retrieve
+
+        return await view(*args, **kwargs)
