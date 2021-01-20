@@ -17,12 +17,6 @@ class PersonModelAPIView(ModelAPIView):
         )
         return queryset
 
-    async def list(self, *args, **kwargs):
-        queryset = await self.get_queryset(*args, **kwargs)
-        response = self.process_response(queryset)
-        response = self.paginate_response(queryset)
-        return self.json_response(data=response)
-
 
 class CustomerModelAPIView(ModelAPIView):
     model = Customer

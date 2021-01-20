@@ -171,7 +171,7 @@ class ModelAPIView(MongoAPIMixin):
 
         return await view(*args, **kwargs)
 
-    async def list(self):
+    async def list(self, *args, **kwargs):
         queryset = await self.get_queryset()
         response = self.process_response(queryset)
         response = self.paginate_response(queryset)
