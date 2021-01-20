@@ -71,3 +71,7 @@ class MongoModelManager:
         result = await future
 
         return result
+
+    async def delete(self, query_filter):
+        result = await self.collection.delete_one(query_filter)
+        return result
