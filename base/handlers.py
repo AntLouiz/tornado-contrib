@@ -159,7 +159,7 @@ class ModelAPIView(MongoAPIMixin):
             self.json_response({'error': [_("Não são permitidas alterações de campos protegidos.")]}, 400)
             raise Finish()
 
-    async def get_queryset(self, many=True, *args, **kwargs):
+    async def get_queryset(self, many=True):
         queryset = await self.model.manager.find(self.query_filter, many=many)
         return queryset
 
@@ -171,20 +171,20 @@ class ModelAPIView(MongoAPIMixin):
 
         return await view(*args, **kwargs)
 
-    async def list(self, *args, **kwargs):
-        queryset = await self.get_queryset(*args, **kwargs)
+    async def list(self):
+        queryset = await self.get_queryset()
         response = self.process_response(queryset)
         response = self.paginate_response(queryset)
         return self.json_response(data=response)
 
-    async def retrieve(self, *args, **kwargs):
+    async def retrieve(self, object_id):
         self.query_filter[self.lookup_field] = self.lookup_arg
 
         queryset = await self.get_queryset(many=False)
         response = self.process_response(queryset)
         return self.json_response(data=response)
 
-    async def post(self, *args, **kwargs):
+    async def post(self):
         post_data = self.get_body_data()
         model_object = self.model(post_data)
         model_object.is_valid()
@@ -194,7 +194,7 @@ class ModelAPIView(MongoAPIMixin):
 
         return self.json_response(data=response, status=201)
 
-    async def patch(self, object_id, *args, **kwargs):
+    async def patch(self, object_id):
         self.validate_body_data()
         data = self.get_body_data()
 
@@ -203,9 +203,9 @@ class ModelAPIView(MongoAPIMixin):
             self.json_response({'error': [_("Registro não alterado.")]}, 400)
             return
 
-        return self.json_response(data, 200)
+        return self.json_response(data=data, status=200)
 
-    async def delete(self, object_id, *args, **kwargs):
+    async def delete(self, object_id):
         query_filter = {"_id": object_id}
         result = await self.model.manager.delete(query_filter)
         if not result:
@@ -213,4 +213,4 @@ class ModelAPIView(MongoAPIMixin):
             return
 
         response = query_filter
-        return self.json_response(data=response, 200)
+        return self.json_response(data=response, status=200)
