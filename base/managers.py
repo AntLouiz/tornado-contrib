@@ -23,15 +23,6 @@ class MongoModelManager:
     def __init__(self, collection):
         self.collection = collection
 
-    def _parse_json(self, data):
-        return json.loads(json_util.dumps(data))
-
-    def _parse_query_filter(self, query_filter):
-        has_id_field = query_filter.get('_id')
-        if has_id_field:
-            query_filter['_id'] = ObjectId(has_id_field)
-        return query_filter
-
     async def find(self, query_filter={}, many=True, sort=('_id', DESCENDING)):
         query_filter = self._parse_query_filter(query_filter)
         count = await self.collection.count_documents(query_filter)
@@ -63,6 +54,10 @@ class MongoModelManager:
         return data
 
     async def update(self, query_filter, data):
+        query_filter = self._convert_id_field(query_filter)
+        data = {
+            "$set": data
+        }
         future = self.collection.update_one(query_filter, data)
 
         if len(data) > 1:
@@ -75,3 +70,16 @@ class MongoModelManager:
     async def delete(self, query_filter):
         result = await self.collection.delete_one(query_filter)
         return result
+
+    def _parse_json(self, data):
+        return json.loads(json_util.dumps(data))
+
+    def _convert_id_field(self, query_filter):
+        has_id_field = query_filter.get('_id')
+        if has_id_field:
+            query_filter['_id'] = ObjectId(has_id_field)
+        return query_filter
+
+    def _parse_query_filter(self, query_filter):
+        query_filter = self._convert_id_field(query_filter)
+        return query_filter
