@@ -1,5 +1,5 @@
 from contrib.base.models import MongoModel
-from schematics.types import (
+from contrib.base.fields import (
     StringType,
     ModelType,
     BooleanType,
