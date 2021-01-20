@@ -3,6 +3,7 @@ from schematics.models import Model
 from schematics.exceptions import DataError
 from .managers import MongoModelManager
 from motor import MotorDatabase
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
 class MongoModel(Model):
@@ -11,7 +12,7 @@ class MongoModel(Model):
     def __init__(self, raw_data=None, *args, **kwargs):
         self.manager = MongoModelManager
 
-        if isinstance(raw_data, MotorDatabase):
+        if isinstance(raw_data, MotorDatabase) or isinstance(raw_data, AsyncIOMotorDatabase):
             db = raw_data
             collection_name = self.Meta.collection_name
             collection = db[collection_name]

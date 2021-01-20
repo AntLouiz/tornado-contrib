@@ -1,9 +1,10 @@
-from base.models import MongoModel
+from contrib.base.models import MongoModel
 from schematics.types import (
     StringType,
     ModelType,
     BooleanType,
     ListType,
+    UTCDateTimeType
 )
 
 
@@ -37,8 +38,8 @@ class User(MongoModel):
     is_staff = BooleanType()
     is_active = BooleanType()
     is_superuser = BooleanType()
-    last_login = UTCDatetimeType()
-    date_joined = UTCDatetimeType()
+    last_login = UTCDateTimeType()
+    date_joined = UTCDateTimeType()
 
     class Meta:
         collection_name = 'users'

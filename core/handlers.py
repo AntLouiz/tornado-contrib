@@ -1,4 +1,5 @@
 from contrib.base.handlers import ModelAPIView
+from contrib.auth.models import Permission
 from core.models import Person, Customer
 from pymongo import ASCENDING
 
@@ -20,5 +21,11 @@ class PersonModelAPIView(ModelAPIView):
 
 class CustomerModelAPIView(ModelAPIView):
     model = Customer
+    lookup_field = '_id'
+    lookup_url_kwarg = 'object_id'
+
+
+class PermissionModelAPIView(ModelAPIView):
+    model = Permission
     lookup_field = '_id'
     lookup_url_kwarg = 'object_id'
