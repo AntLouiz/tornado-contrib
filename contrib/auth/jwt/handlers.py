@@ -36,7 +36,7 @@ class JWTLoginHandler(CreateAPIView):
         access_token = create_access_token(username)
         now = datetime.datetime.utcnow()
 
-        query_filter = {'_id': user['_id']}
+        query_filter = {'_id': user['_id']['$oid']}
         data = {'last_login': now.isoformat()}
         await self.model.manager.update(query_filter, data=data)
 
@@ -85,5 +85,22 @@ class JWTRefreshHandler(CreateAPIView):
         return self.json_response(response_data, status=200)
 
 
-class CurrentJWTUser():
-    pass
+class CurrentJWTUser(RetrieveAPIView):
+    model = User
+    authentication_class = JwtAuthentication
+
+    async def get(self, *args, **kwargs):
+        user = self.jwt_user
+
+        username = user.get('username')
+        queryset = await self.model.manager.find({'username': username})
+
+        if not queryset.total:
+            self.json_response({'error': 'User not authenticated.'}, 401)
+            return
+
+        user = queryset.asdict()
+        user = self.model(user)
+        response_data = user.to_primitive()
+
+        return self.json_response(response_data, status=200)
