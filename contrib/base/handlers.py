@@ -44,7 +44,7 @@ class ModelAPIView(MongoAPIMixin):
 
     async def check_authentication(self):
         auhentication = self.authentication_class()
-        is_authenticated = auhentication.authenticate(self.request, self)
+        is_authenticated = await auhentication.authenticate(self.request, self)
         if not is_authenticated:
             return self.json_response(auhentication.unauthorized_message, 401)
 
