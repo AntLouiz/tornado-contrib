@@ -93,7 +93,7 @@ class CurrentJWTUser(RetrieveAPIView):
         user = self.jwt_user
 
         username = user.get('username')
-        queryset = await self.model.manager.find({'username': username})
+        queryset = await self.model.manager.find({'username': username}, many=False, remove_fields=['_id'])
 
         if not queryset.total:
             self.json_response({'error': 'User not authenticated.'}, 401)
@@ -101,6 +101,6 @@ class CurrentJWTUser(RetrieveAPIView):
 
         user = queryset.asdict()
         user = self.model(user)
-        response_data = user.to_primitive()
+        response_data = user.to_primitive(role='public')
 
         return self.json_response(response_data, status=200)

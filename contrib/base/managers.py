@@ -57,7 +57,6 @@ class MongoModelManager:
         return data
 
     async def update(self, query_filter, data):
-        print(query_filter)
         query_filter = self._convert_id_field(query_filter)
         data = {
             "$set": data
