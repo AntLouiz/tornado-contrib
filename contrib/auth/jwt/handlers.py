@@ -38,7 +38,7 @@ class JWTLoginHandler(CreateAPIView):
 
         query_filter = {'_id': user['_id']}
         data = {'last_login': now.isoformat()}
-        self.model.manager.update(query_filter, data=data)
+        await self.model.manager.update(query_filter, data=data)
 
         response_data = {'access_token': access_token}
         return self.json_response(response_data, status=200)
@@ -58,16 +58,32 @@ class JWTLogoutHandler(RetrieveAPIView):
         token = self.model(raw_data={'jti': jti})
         await self.model.manager.create(token)
 
-        data = {
-            'message': 'Token revogado'
-        }
-
-        self.json_response(data)
-        return
+        response_data = {'message': 'Token revoked'}
+        return self.json_response(response_data, status=200)
 
 
-class JWTRefreshHandler():
-    pass
+class JWTRefreshHandler(CreateAPIView):
+    model = RevokedToken
+
+    async def post(self, *args, **kwargs):
+        jti = self.jti
+        user = self.jwt_user
+
+        queryset = await self.model.manager.find({"jti": jti})
+        if queryset.total != 0:
+            return self.json_response({'error': 'Current token is revoked.'}, 401)
+
+        username = user.get('username')
+        access_token = create_access_token(username)
+
+        now = datetime.datetime.utcnow()
+        query_filter = {'_id': user['_id']}
+        data = {'last_login': now.isoformat()}
+        await self.model.manager.update(query_filter, data=data)
+
+        response_data = {'access_token': access_token}
+        return self.json_response(response_data, status=200)
+
 
 class CurrentJWTUser():
     pass
