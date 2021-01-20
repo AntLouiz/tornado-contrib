@@ -32,7 +32,7 @@ class MongoModelManager:
             query_filter['_id'] = ObjectId(has_id_field)
         return query_filter
 
-    async def find(self, query_filter={}, many=True, sort=('_id', DESCENDING), *args, **kwargs):
+    async def find(self, query_filter={}, many=True, sort=('_id', DESCENDING)):
         query_filter = self._parse_query_filter(query_filter)
         count = await self.collection.count_documents(query_filter)
 
@@ -54,7 +54,7 @@ class MongoModelManager:
         queryset = Queryset(parsed_results, count)
         return queryset
 
-    async def create(self, model_object, *args, **kwargs):
+    async def create(self, model_object):
         data = model_object.to_primitive()
         data.pop('_id', None)
 
@@ -62,7 +62,7 @@ class MongoModelManager:
         data['_id'] = str(result.inserted_id)
         return data
 
-    async def update(self, query_filter, data, *args, **kwargs):
+    async def update(self, query_filter, data):
         future = self.collection.update_one(query_filter, data)
 
         if len(data) > 1:
