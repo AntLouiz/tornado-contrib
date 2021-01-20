@@ -152,11 +152,11 @@ class ModelAPIView(MongoAPIMixin):
         has_protected_fields = any(field in model_protected_attrs for field in data_fields)
 
         if not has_right_fields:
-            self.json_response({'error': [_("Campo(s) não existente(s) no modelo.")]}, 400)
+            self.json_response({'error': ["Campo(s) não existente(s) no modelo."]}, 400)
             raise Finish()
 
         if has_protected_fields:
-            self.json_response({'error': [_("Não são permitidas alterações de campos protegidos.")]}, 400)
+            self.json_response({'error': ["Não são permitidas alterações de campos protegidos."]}, 400)
             raise Finish()
 
     async def get_queryset(self, many=True):
@@ -204,7 +204,7 @@ class ModelAPIView(MongoAPIMixin):
 
         result = await self.model.manager.update({"_id": object_id}, data)
         if not result:
-            self.json_response({'error': [_("Registro não alterado.")]}, 400)
+            self.json_response({'error': ["Registro não alterado."]}, 400)
             return
 
         return self.json_response(data=data, status=200)
@@ -213,7 +213,7 @@ class ModelAPIView(MongoAPIMixin):
         query_filter = {"_id": object_id}
         result = await self.model.manager.delete(query_filter)
         if not result:
-            self.json_response({'error': [_("Não foi possível remover o registro.")]}, 400)
+            self.json_response({'error': ["Não foi possível remover o registro."]}, 400)
             return
 
         response = {"_id": object_id}
