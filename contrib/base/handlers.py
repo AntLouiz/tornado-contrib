@@ -36,7 +36,14 @@ class MongoAPIMixin(RequestHandler):
             permission_obj = permission_class()
             has_permission = await permission_obj.has_permission(self.request, self)
             if not has_permission:
-                return self.json_response(permission_class.message, 400)
+                return self.json_response(permission_class.message, 403)
+
+    async def check_object_permissions(self, obj):
+        for permission_class in self.permissions_classes:
+            permission_obj = permission_class()
+            has_permission = await permission_obj.has_object_permission(self.request, obj)
+            if not has_permission:
+                return self.json_response(permission_class.message, 403)
 
     async def check_authentication(self):
         auhentication = self.authentication_class()
