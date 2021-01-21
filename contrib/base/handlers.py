@@ -1,4 +1,5 @@
 import json
+import re
 from urllib.parse import urlparse, parse_qs, urlencode
 from cached_property import cached_property
 from tornado.web import RequestHandler
@@ -17,6 +18,7 @@ class MongoAPIMixin(RequestHandler):
     pagination_class = Paginator
     authentication_class = BaseAuthentication
     permissions_classes = [BasePermission]
+    search_fields = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -103,6 +105,21 @@ class MongoAPIMixin(RequestHandler):
                 if len(splited_query_arg) == 1:
                     query_arg = splited_query_arg[0]
                 query_args[key] = query_arg
+
+        query_args = self.get_search_filter(query_args)
+
+        return query_args
+
+    def get_search_filter(self, query_args):
+        search_value = query_args.pop('search', {})
+        if search_value and self.search_fields:
+            search_fields = []
+            for field in self.search_fields:
+                search_pattern = r'.*{}.*'.format(search_value)
+                regex = re.compile(search_pattern, re.I)
+                search_fields.append({field: regex})
+            search_query = {"$or": search_fields}
+            query_args.update(search_query)
 
         return query_args
 

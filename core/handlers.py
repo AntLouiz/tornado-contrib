@@ -12,6 +12,7 @@ class PersonModelAPIView(ModelAPIView):
     lookup_field = '_id'
     # authentication_class = JwtAuthentication
     lookup_url_kwarg = 'object_id'
+    search_fields = ['name']
 
     async def get_queryset(self, many=True, *args, **kwargs):
         sort_rule = ('name', ASCENDING)
