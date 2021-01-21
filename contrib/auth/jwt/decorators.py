@@ -4,7 +4,7 @@ import datetime
 from contrib.auth.jwt.models import RevokedToken
 from contrib.auth.models import User
 from tornado.web import Finish
-from pay.settings import JWT_SECRET, ACCESS_TOKEN_EXPIRITY_TIME, DATABASE_NAME
+from settings import JWT_SECRET, ACCESS_TOKEN_EXPIRITY_TIME, DATABASE_NAME
 
 
 
