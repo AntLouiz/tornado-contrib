@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime
 from urllib.parse import urlparse, parse_qs, urlencode
 from cached_property import cached_property
 from tornado.web import RequestHandler
@@ -19,6 +20,7 @@ class MongoAPIMixin(RequestHandler):
     authentication_class = BaseAuthentication
     permissions_classes = [BasePermission]
     search_fields = []
+    view_role = 'public'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,10 +66,11 @@ class MongoAPIMixin(RequestHandler):
 
         return body_data
 
-    def get_data(self):
+    def get_data(self, strict=True):
         body_data = self.get_body_data()
         data = self.model(body_data)
-        data.validate()
+        if strict:
+            data.validate()
         return data
 
     async def prepare(self, *args, **kwargs):
@@ -107,6 +110,7 @@ class MongoAPIMixin(RequestHandler):
                 query_args[key] = query_arg
 
         query_args = self.get_search_filter(query_args)
+        query_args = self.get_date_range(query_args)
 
         return query_args
 
@@ -120,6 +124,44 @@ class MongoAPIMixin(RequestHandler):
                 search_fields.append({field: regex})
             search_query = {"$or": search_fields}
             query_args.update(search_query)
+
+        return query_args
+
+    def get_date_range(self, query_args):
+        date_field = None
+        from_date = None
+        to_date = None
+
+        query_filter_copy = query_args.copy()
+
+        for key in query_filter_copy.keys():
+            if key.endswith(('.from')):
+                from_date = query_args.pop(key)
+                date_field = key.split('.')[0]
+            elif key.endswith('.to'):
+                to_date = query_args.pop(key)
+                date_field = key.split('.')[0]
+
+        if not date_field:
+            return query_args
+
+        date_format = "%Y%m%d"
+
+        try:
+            from_date = datetime.strptime(str(from_date), date_format)
+            from_date = from_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+            to_date = datetime.strptime(str(to_date), date_format)
+            to_date = to_date.replace(hour=23, minute=59)
+            to_date = to_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+            query_args[date_field] = {
+                "$gte": from_date,
+                "$lte": to_date
+            }
+
+        except Exception as e:
+            pass
 
         return query_args
 
@@ -196,7 +238,14 @@ class MongoAPIMixin(RequestHandler):
             raise Finish()
 
     async def get_queryset(self, many=True):
-        fields_to_remove = self.model.Options.roles['public'].fields
+        fields_to_remove = None
+        model_options = getattr(self.model, 'Options', None)
+        if model_options:
+            try:
+                fields_to_remove = model_options.roles[self.view_role].fields
+            except KeyError:
+                fields_to_remove = None
+
         queryset = await self.model.manager.find(self.query_filter,
                                                  many=many,
                                                  remove_fields=fields_to_remove)
@@ -242,10 +291,10 @@ class ModelAPIView(MongoAPIMixin):
 
     async def patch(self, object_id):
         self.validate_body_data()
-        data = self.get_data()
+        data = self.get_body_data()
 
         result = await self.model.manager.update({"_id": object_id}, data)
-        if not result:
+        if not result.modified_count:
             self.json_response({'error': ["Registro não alterado."]}, 400)
             return
 
@@ -254,7 +303,7 @@ class ModelAPIView(MongoAPIMixin):
     async def delete(self, object_id):
         query_filter = {"_id": object_id}
         result = await self.model.manager.delete(query_filter)
-        if not result:
+        if not result.modified_count:
             self.json_response({'error': ["Não foi possível remover o registro."]}, 400)
             return
 
@@ -274,7 +323,7 @@ class CreateAPIView(MongoAPIMixin):
         return self.json_response(data=response, status=201)
 
 
-class RetrieveAPIView(MongoAPIMixin):
+class ListRetrieveAPIView(MongoAPIMixin):
     async def get(self, *args, **kwargs):
         view = self.list
         self.lookup_arg = kwargs.get(self.lookup_url_kwarg)
@@ -282,3 +331,34 @@ class RetrieveAPIView(MongoAPIMixin):
             view = self.retrieve
 
         return await view(*args, **kwargs)
+
+    async def list(self, *args, **kwargs):
+        queryset = await self.get_queryset()
+        response = self.process_response(queryset)
+        response = self.paginate_response(queryset)
+        return self.json_response(data=response)
+
+    async def retrieve(self, object_id):
+        self.query_filter[self.lookup_field] = self.lookup_arg
+
+        queryset = await self.get_queryset(many=False)
+        response = self.process_response(queryset)
+        if not response:
+            self.json_response({'error': ["Registro não encontrado."]}, 404)
+            return
+
+        return self.json_response(data=response)
+
+
+class UpdateAPIView(ModelAPIView):
+
+    async def put(self, object_id, *args, **kwargs):
+        self.validate_body_data()
+        data = self.get_body_data()
+
+        result = await self.model.manager.update({"_id": object_id}, data)
+        if not result:
+            self.json_response({'error': ["Registro não alterado."]}, 400)
+            return
+
+        return self.json_response(data=data, status=200)

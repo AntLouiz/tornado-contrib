@@ -1,17 +1,11 @@
 import jwt
 import re
 import datetime
-import settings
 from contrib.auth.jwt.models import RevokedToken
 from contrib.auth.models import User
 from tornado.web import Finish
+from pay.settings import JWT_SECRET, ACCESS_TOKEN_EXPIRITY_TIME, DATABASE_NAME
 
-if settings:
-    from settings import JWT_SECRET, ACCESS_TOKEN_EXPIRITY_TIME, DATABASE_NAME
-else:
-    JWT_SECRET = config('JWT_SECRET', '123')
-    ACCESS_TOKEN_EXPIRITY_TIME = config('ACCESS_TOKEN_EXPIRITY_TIME', 30)
-    DATABASE_NAME = config('DATABASE_NAME', 'core')
 
 
 def jwt_required(handler_method):

@@ -1,5 +1,5 @@
 import datetime
-from contrib.base.handlers import CreateAPIView, RetrieveAPIView
+from contrib.base.handlers import CreateAPIView, ListRetrieveAPIView
 from contrib.auth.models import User
 from contrib.auth.jwt.models import RevokedToken
 from contrib.auth.jwt.hash import verify_password
@@ -20,7 +20,7 @@ class JWTLoginHandler(CreateAPIView):
             error_msg = {'error': 'Insert the username and password.'}
             return self.json_response(data=error_msg, status=400)
 
-        queryset = await self.model.manager.find({'username': username}, many=False)
+        queryset = await self.model.manager.find({'username': username, 'is_active': True}, many=False)
         if not queryset.total:
             error_msg = {'error': 'Username or password invalid.'}
             return self.json_response(data=error_msg, status=401)
@@ -44,7 +44,7 @@ class JWTLoginHandler(CreateAPIView):
         return self.json_response(response_data, status=200)
 
 
-class JWTLogoutHandler(RetrieveAPIView):
+class JWTLogoutHandler(ListRetrieveAPIView):
     model = RevokedToken
     authentication_class = JwtAuthentication
 
@@ -85,7 +85,7 @@ class JWTRefreshHandler(CreateAPIView):
         return self.json_response(response_data, status=200)
 
 
-class CurrentJWTUser(RetrieveAPIView):
+class CurrentJWTUser(ListRetrieveAPIView):
     model = User
     authentication_class = JwtAuthentication
 

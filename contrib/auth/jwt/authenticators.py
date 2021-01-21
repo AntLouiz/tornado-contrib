@@ -1,7 +1,6 @@
 import jwt
 import re
 import datetime
-import settings
 from tornado.web import Finish
 from contrib.auth.jwt.models import RevokedToken
 from contrib.auth.jwt.decorators import _extract_token, decode_access_token, DATABASE_NAME
@@ -26,6 +25,8 @@ class JwtAuthentication(BaseAuthentication):
                 handler_object,
                 token
             )
+            if not token_data:
+                return False
 
             handler_object.jwt_user = token_data['jwt_user']
             handler_object.jti = token_data['jti']
@@ -52,8 +53,7 @@ class JwtAuthentication(BaseAuthentication):
         queryset = await user.manager.find(query_filter, many=False, remove_fields=['_id'])
         if not queryset.total:
             msg = 'User not found'
-            self.unauthorized_message = {'error': msg}
-            return False
+            return self.is_unauthorized(msg=msg)
 
         user = User(raw_data=queryset.asdict())
 

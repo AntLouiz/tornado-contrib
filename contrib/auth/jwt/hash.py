@@ -1,17 +1,13 @@
-import settings
 from passlib.context import CryptContext
 
 
-if settings:
-    from settings import ALGORITHM_SCHEMES
-else:
-    ALGORITHM_SCHEMES = [
-        "django_argon2",
-        "django_pbkdf2_sha256",
-        "django_pbkdf2_sha1",
-        "md5_crypt",
-        "django_bcrypt_sha256"
-    ]
+ALGORITHM_SCHEMES = [
+    "django_argon2",
+    "django_pbkdf2_sha256",
+    "django_pbkdf2_sha1",
+    "md5_crypt",
+    "django_bcrypt_sha256"
+]
 
 
 hash_context = CryptContext(

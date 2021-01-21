@@ -24,7 +24,7 @@ class MongoModelManager:
         self.collection = collection
 
     async def find(self, query_filter={}, many=True,
-                   sort=('_id', DESCENDING), remove_fields=[]):
+                   sort=('_id', DESCENDING), remove_fields=[], limit=None):
 
         query_filter = self._parse_query_filter(query_filter)
         fields_to_remove = self._parse_remove_fields(remove_fields)
@@ -34,6 +34,8 @@ class MongoModelManager:
             cursor = self.collection.find(query_filter, fields_to_remove)
             if self.skip:
                 cursor.skip(self.skip)
+            if limit:
+                cursor.limit(limit)
             if self.limit:
                 cursor.limit(self.limit)
             if sort:
@@ -74,6 +76,9 @@ class MongoModelManager:
         query_filter = self._convert_id_field(query_filter)
         result = await self.collection.delete_one(query_filter)
         return result
+
+    async def create_index(self, fields, unique=True):
+        await self.collection.create_index(fields, unique=unique)
 
     def _parse_json(self, data):
         return json.loads(json_util.dumps(data))
