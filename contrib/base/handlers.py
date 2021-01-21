@@ -73,12 +73,16 @@ class MongoAPIMixin(RequestHandler):
             data.validate()
         return data
 
+    def set_default_headers(self):
+        self.set_header('Content-Type', 'application/json')
+
     async def prepare(self, *args, **kwargs):
         self.query_filter = self.extract_query_args()
         self.page = self.query_filter.pop('page', 0)
         self.page_size = self.query_filter.pop('page_size', self.page_size)
         self.model.manager.skip = self.page
         self.model.manager.limit = self.page_size
+        self.set_default_headers()
         await self.check_permissions()
         await self.check_authentication()
 
