@@ -1,4 +1,4 @@
-from contrib.base.models import MongoModel
+from contrib.base.models import MotorModel
 from contrib.base.fields import (
     StringType,
     ModelType,
@@ -9,7 +9,7 @@ from contrib.base.fields import (
 from schematics.transforms import blacklist
 
 
-class Permission(MongoModel):
+class Permission(MotorModel):
     name = StringType()
     codename = StringType()
 
@@ -17,7 +17,7 @@ class Permission(MongoModel):
         collection_name = 'permissions'
 
 
-class Group(MongoModel):
+class Group(MotorModel):
     name = StringType()
     permissions = ListType(ModelType(Permission))
 
@@ -25,7 +25,7 @@ class Group(MongoModel):
         collection_name = 'groups'
 
 
-class User(MongoModel):
+class User(MotorModel):
     """
     https://docs.djangoproject.com/en/3.1/ref/contrib/auth/
     """

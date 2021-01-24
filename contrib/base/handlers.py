@@ -6,13 +6,13 @@ from cached_property import cached_property
 from tornado.web import RequestHandler
 from tornado.web import Finish
 from contrib.auth.authenticators import BaseAuthentication
-from contrib.base.models import MongoModel
+from contrib.base.models import MotorModel
 from contrib.base.permissions import BasePermission
 from contrib.base.pagination import Paginator, EmptyPage
 
 
-class MongoAPIMixin(RequestHandler):
-    model = MongoModel
+class MotorAPIMixin(RequestHandler):
+    model = MotorModel
     lookup_field = '_id'
     lookup_url_kwarg = 'id'
     page_size = 20
@@ -267,7 +267,7 @@ class MongoAPIMixin(RequestHandler):
         return queryset
 
 
-class ModelAPIView(MongoAPIMixin):
+class ModelAPIView(MotorAPIMixin):
 
     async def get(self, *args, **kwargs):
         view = self.list
@@ -326,7 +326,7 @@ class ModelAPIView(MongoAPIMixin):
         return self.json_response(data=response, status=200)
 
 
-class CreateAPIView(MongoAPIMixin):
+class CreateAPIView(MotorAPIMixin):
     async def post(self, *args, **kwargs):
         post_data = self.get_data()
         model_object = self.model(post_data)
@@ -338,7 +338,7 @@ class CreateAPIView(MongoAPIMixin):
         return self.json_response(data=response, status=201)
 
 
-class ListRetrieveAPIView(MongoAPIMixin):
+class ListRetrieveAPIView(MotorAPIMixin):
     async def get(self, *args, **kwargs):
         view = self.list
         self.lookup_arg = kwargs.get(self.lookup_url_kwarg)

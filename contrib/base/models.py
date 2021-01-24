@@ -1,22 +1,22 @@
 from schematics.types import StringType
 from schematics.models import Model
 from schematics.exceptions import DataError
-from .managers import MongoModelManager
+from .managers import MotorModelManager
 from motor import MotorDatabase
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
-class MongoModel(Model):
-    _manager = MongoModelManager
+class MotorModel(Model):
+    _manager = MotorModelManager
 
     def __init__(self, raw_data=None, *args, **kwargs):
-        self.manager = MongoModelManager
+        self.manager = MotorModelManager
 
         if isinstance(raw_data, MotorDatabase) or isinstance(raw_data, AsyncIOMotorDatabase):
             db = raw_data
             collection_name = self.Meta.collection_name
             collection = db[collection_name]
-            self.manager = MongoModelManager(collection)
+            self.manager = MotorModelManager(collection)
             raw_data = None
 
         # kwargs['strict'] = False

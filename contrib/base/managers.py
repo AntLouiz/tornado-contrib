@@ -16,7 +16,7 @@ class Queryset:
     def __repr__(self):
         return f'<Queryset ({len(self._value)} of {self.total})>'
 
-class MongoModelManager:
+class MotorModelManager:
     skip = None
     limit = None
 
