@@ -80,6 +80,9 @@ class MongoModelManager:
     async def create_index(self, fields, unique=True):
         await self.collection.create_index(fields, unique=unique)
 
+    def get_collection(self):
+        return self.collection
+
     def _parse_json(self, data):
         return json.loads(json_util.dumps(data))
 
