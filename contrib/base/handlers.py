@@ -73,18 +73,29 @@ class MongoAPIMixin(RequestHandler):
             data.validate()
         return data
 
-    def set_default_headers(self):
-        self.set_header('Content-Type', 'application/json')
+    def set_default_headers(self, *args, **kwargs):
+        self.set_header("Content-Type", "application/json")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*")
+        self.set_header("Access-Control-Request-Headers", "X-Requested-With, accept, content-type")
+        self.set_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE")
 
     async def prepare(self, *args, **kwargs):
+        self.set_default_headers()
         self.query_filter = self.extract_query_args()
         self.page = self.query_filter.pop('page', 0)
         self.page_size = self.query_filter.pop('page_size', self.page_size)
         self.model.manager.skip = self.page
         self.model.manager.limit = self.page_size
-        self.set_default_headers()
+
+        if self.request.method == 'OPTIONS':
+            return
+
         await self.check_permissions()
         await self.check_authentication()
+
+    async def options(self, *args, **kwargs):
+        return self.json_response(data={}, status=200)
 
     def extract_query_args(self):
         query_args = {}
