@@ -50,12 +50,12 @@ class JwtAuthentication(BaseAuthentication):
         user = User(database)
 
         query_filter = {'username': jwt_username, 'is_active': True}
-        queryset = await user.manager.find(query_filter, many=False, remove_fields=['_id'])
+        queryset = await user.manager.find(query_filter, many=False)
         if not queryset.total:
             msg = 'User not found'
             return self.is_unauthorized(msg=msg)
 
-        user = User(raw_data=queryset.asdict())
+        user = User(raw_data=queryset.asdict(), strict=False)
 
         queryset = await revoked_tokens.manager.find({'jti': token})
         if queryset.total != 0:
