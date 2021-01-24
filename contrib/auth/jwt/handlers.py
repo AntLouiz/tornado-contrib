@@ -64,6 +64,7 @@ class JWTLogoutHandler(ListRetrieveAPIView):
 
 class JWTRefreshHandler(CreateAPIView):
     model = RevokedToken
+    authentication_class = JwtAuthentication
 
     async def post(self, *args, **kwargs):
         jti = self.jti
