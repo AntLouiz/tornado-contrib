@@ -1,5 +1,5 @@
-from contrib.base.models import MotorModel
-from contrib.base.fields import (
+from base.models import MotorModel
+from base.fields import (
     StringType,
     ModelType,
     BooleanType,

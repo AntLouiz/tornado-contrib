@@ -1,9 +1,9 @@
 import jwt
 import re
 import datetime
-from contrib.auth.jwt.models import RevokedToken
-from contrib.auth.models import User
 from tornado.web import Finish
+from auth.jwt.models import RevokedToken
+from auth.models import User
 from settings import JWT_SECRET, ACCESS_TOKEN_EXPIRITY_TIME, DATABASE_NAME
 
 

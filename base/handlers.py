@@ -5,10 +5,10 @@ from urllib.parse import urlparse, parse_qs, urlencode
 from cached_property import cached_property
 from tornado.web import RequestHandler
 from tornado.web import Finish
-from contrib.auth.authenticators import BaseAuthentication
-from contrib.base.models import MotorModel
-from contrib.base.permissions import BasePermission
-from contrib.base.pagination import Paginator, EmptyPage
+from auth.authenticators import BaseAuthentication
+from base.models import MotorModel
+from base.permissions import BasePermission
+from base.pagination import Paginator, EmptyPage
 
 
 class MotorAPIMixin(RequestHandler):
