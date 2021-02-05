@@ -1,10 +1,10 @@
 import datetime
-from contrib.base.handlers import CreateAPIView, ListRetrieveAPIView
-from contrib.auth.models import User
-from contrib.auth.jwt.models import RevokedToken
-from contrib.auth.jwt.hash import verify_password
-from contrib.auth.jwt.decorators import create_access_token
-from contrib.auth.jwt.authenticators import JwtAuthentication
+from tornado_contrib.base.handlers import CreateAPIView, ListRetrieveAPIView
+from tornado_contrib.auth.models import User
+from tornado_contrib.auth.jwt.models import RevokedToken
+from tornado_contrib.auth.jwt.hash import verify_password
+from tornado_contrib.auth.jwt.decorators import create_access_token
+from tornado_contrib.auth.jwt.authenticators import JwtAuthentication
 
 
 class JWTLoginHandler(CreateAPIView):
