@@ -2,6 +2,11 @@
 
 Uma série de classes que ajudam a escrever API's utilizando views baseadas em classes  para projetos com Tornado + MongoDB.
 
+Este projeto é constitui principalmente das seguintes libs:
+* [Tornado](https://github.com/tornadoweb/tornado): is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
+* [Motor](https://github.com/mongodb/motor): presents a coroutine-based API for non-blocking access to MongoDB.
+* [Schematics](https://github.com/schematics/schematics): is a Python library to combine types into structures, validate them, and transform the shapes of your data based on simple descriptions.
+
 ## Hello, world
 
 Aqui um simples "Hello, world" com o Tornado + Motor:
