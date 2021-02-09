@@ -7,7 +7,7 @@ Uma série de classes que ajudam a escrever API's utilizando views baseadas em c
 
 Aqui um simples "Hello, world" com o Tornado + Motor:
 
-```
+```python
 import tornado.ioloop
 import tornado.web
 from contrib.base.models import MotorModel
