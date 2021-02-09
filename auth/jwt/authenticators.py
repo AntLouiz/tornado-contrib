@@ -2,10 +2,10 @@ import jwt
 import re
 import datetime
 from tornado.web import Finish
-from auth.jwt.models import RevokedToken
-from auth.jwt.decorators import _extract_token, decode_access_token, DATABASE_NAME
-from auth.models import User
-from auth.authenticators import BaseAuthentication
+from tornado_contrib.auth.jwt.models import RevokedToken
+from tornado_contrib.auth.jwt.decorators import _extract_token, decode_access_token, DATABASE_NAME
+from tornado_contrib.auth.models import User
+from tornado_contrib.auth.authenticators import BaseAuthentication
 
 
 class JwtAuthentication(BaseAuthentication):

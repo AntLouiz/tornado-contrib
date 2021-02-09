@@ -1,5 +1,5 @@
-from base.models import MotorModel
-from base.fields import (
+from tornado_contrib.base.models import MotorModel
+from tornado_contrib.base.fields import (
     StringType,
     ModelType,
     BooleanType,
