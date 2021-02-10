@@ -42,20 +42,50 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
 <div class="section" id="user-s-guide">
-<h1>User’s Guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h1>
+<h2>User’s Guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><p>Introduction</p></li>
 <li><p>Installation</p></li>
 <li><p>Quickstart</p></li>
 </ul>
+<div class="section" id="criando-o-model">
+<h3>Criando o Model<a class="headerlink" href="#criando-o-model" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><ul class="simple">
-<li><p>Creating the Model</p></li>
-<li><p>Creating the ModelView</p></li>
-<li><p>Using with Tornado app</p></li>
+<div><dl class="simple">
+<dt>Para criar um model utilize a classe MotorModel.</dt><dd><ul class="simple">
+<li><p>Todos os models tem como base de herança o <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">schematics.modes.Model</a>.</p></li>
+<li><p>Cada attributo constitui de um campo no banco de dados.</p></li>
+<li><p>A classe interna <strong>Meta</strong> informa qual collection este modelo pertence.</p></li>
 </ul>
+</dd>
+</dl>
+<p>O código abaixo mostra um exemplo de modelo utilizando o <strong>MotorModel</strong>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contrib.base.models</span> <span class="kn">import</span> <span class="n">MotorModel</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">MotorModel</span><span class="p">):</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">StringType</span><span class="p">()</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">StringType</span><span class="p">()</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="s1">&#39;persons&#39;</span>
+</pre></div>
+</div>
+<p><strong>first_name</strong> e <strong>last_name</strong> são campos do modelo, já a classe interna <strong>Meta</strong> é responsável por informar
+qual collection do banco de dados será preenchida com os dados do modelo.</p>
+<p>O modelo <strong>Person</strong> acima criará um documento da forma abaixo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">db</span><span class="o">.</span><span class="n">persons</span><span class="o">.</span><span class="n">insertOne</span><span class="p">({</span><span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
 </div></blockquote>
+</div>
+<div class="section" id="criando-o-modelview">
+<h3>Criando o ModelView<a class="headerlink" href="#criando-o-modelview" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="utilizando-com-tornado">
+<h3>Utilizando com Tornado<a class="headerlink" href="#utilizando-com-tornado" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
 </div>
 
 
