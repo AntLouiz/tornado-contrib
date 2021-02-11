@@ -40,4 +40,4 @@ if __name__ == "__main__":
 
 # Documentation
 
-Documentação e links de recursos adicionais estão disponíveis em [not defined yet]().
+Documentação e links de recursos adicionais estão disponíveis em [Documentation](https://tornado-contrib.readthedocs.io/en/docs/).
