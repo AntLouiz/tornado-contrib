@@ -131,7 +131,7 @@ O doumento **Order** ficará dessa forma:
 
 .. code-block:: python
 
-    {"user": {"username": "John"}}
+    {"user": {"username": "John"}, "price": 1200}
 
 Many-to-many relationships
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
