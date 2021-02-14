@@ -129,7 +129,7 @@ pedidos mas cada pedido só pode ter um <strong>User</strong>, verifique o exemp
 </span></pre></div>
 </div>
 <p>O doumento <strong>Order</strong> ficará dessa forma:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">}}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">},</span> <span class="s2">&quot;price&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -156,14 +156,97 @@ representamos isso:</p>
 </div>
 </div>
 </div>
+<div class="section" id="classe-interna-meta">
+<h2>Classe interna <strong>Meta</strong><a class="headerlink" href="#classe-interna-meta" title="Permalink to this headline">¶</a></h2>
+<p>Esta classe é obrigatória no momento da construção do model, pois adiciona metadados para que
+se possa definir qual collection o model irá lidar. O campo <strong>collection_name</strong> é responsável
+por informar a descrição da collection do model no banco de dados MongodBD.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contrib.base.models</span> <span class="kn">import</span> <span class="n">MotorModel</span>
+<span class="kn">from</span> <span class="nn">contrib.base</span> <span class="kn">import</span> <span class="n">fields</span>
+
+<span class="k">class</span> <span class="nc">Car</span><span class="p">(</span><span class="n">MotorModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">StringType</span><span class="p">()</span>
+
+<span class="hll">    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">collection_name</span> <span class="o">=</span> <span class="s1">&#39;cars&#39;</span>
+</span></pre></div>
 </div>
-<div class="section" id="criando-o-modelview">
-<h1>Criando o ModelView<a class="headerlink" href="#criando-o-modelview" title="Permalink to this headline">¶</a></h1>
-<p>Criando o modelview</p>
+</div>
+<div class="section" id="attributos-do-model">
+<h2>Attributos do <strong>Model</strong><a class="headerlink" href="#attributos-do-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="manager">
+<h3><strong>manager</strong><a class="headerlink" href="#manager" title="Permalink to this headline">¶</a></h3>
+<p>O atributo mais importante do model é o <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">ModelManager</a>. O manager é uma interface responsável
+por fazer as operações de banco de dados.</p>
+</div>
+<div class="section" id="collection">
+<h3><strong>collection</strong><a class="headerlink" href="#collection" title="Permalink to this headline">¶</a></h3>
+<p>Um objeto <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">MotorCollection</a>.</p>
+</div>
+</div>
+<div class="section" id="parametros-do-model">
+<h2>Parâmetros do <strong>Model</strong><a class="headerlink" href="#parametros-do-model" title="Permalink to this headline">¶</a></h2>
+<p>O model necessita como parâmetro obrigatório uma instância de um <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">MotorDatabase</a> para que
+seja possível a comunicação com o banco de dados.</p>
+<p>Como geralmente os models são utilizados dentro de handlers, de acordo com a utilização
+do Motor com o Tornado, faça da seguinte forma:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Car</span><span class="p">(</span><span class="n">MotorModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">StringType</span><span class="p">()</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">collection_name</span> <span class="o">=</span> <span class="s1">&#39;cars&#39;</span>
+
+<span class="k">class</span> <span class="nc">CarsHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="hll">        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">Car</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="criando-o-modelapiview">
+<h1>Criando o ModelAPIView<a class="headerlink" href="#criando-o-modelapiview" title="Permalink to this headline">¶</a></h1>
+<p>Esta biblioteca possibilita a criação de API’s REST baseados em classes, utilizando modelos definidos
+com a classe <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">MotorModel</a>.</p>
+<p>Todas os handlers, herdam da classe <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">ModelAPIView</a>, todas as requisições são roteadas
+para os seus respectivos métodos, por exemplo, uma requisição do tipo POST, será roteada para o método
+<strong>.post()</strong>.</p>
+<p>Os handlers <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">ModelAPIView</a> recebem um importante attributo denomidado <strong>model</strong>.</p>
+<p>Por exemplo:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contrib.handlers</span> <span class="kn">import</span> <span class="n">ModelAPIView</span>
+
+<span class="k">class</span> <span class="nc">PersonAPIHandler</span><span class="p">(</span><span class="n">ModelAPIView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Person</span>
+</pre></div>
+</div>
+<p>O ModelAPIView já implementa todos os métodos de uma API REST, tornando muito mais rápido e fácil
+criar endpoints de um modelo.
+Para customizar algum método por exemplo, o método de listagem, faça o seguinte:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contrib.handlers</span> <span class="kn">import</span> <span class="n">ModelAPIView</span>
+
+<span class="k">class</span> <span class="nc">PersonAPIHandler</span><span class="p">(</span><span class="n">ModelAPIView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Person</span>
+
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_response</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_response</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+</div>
+<div class="section" id="attributos-do-modelapiview">
+<h2>Attributos do ModelAPIView<a class="headerlink" href="#attributos-do-modelapiview" title="Permalink to this headline">¶</a></h2>
+<p>A</p>
+</div>
+<div class="section" id="metodos-do-modelapiview">
+<h2>Métodos do ModelAPIView<a class="headerlink" href="#metodos-do-modelapiview" title="Permalink to this headline">¶</a></h2>
+<p>A</p>
+</div>
 </div>
 <div class="section" id="utilizando-com-tornado">
 <h1>Utilizando com Tornado<a class="headerlink" href="#utilizando-com-tornado" title="Permalink to this headline">¶</a></h1>
-<p>Exemplos</p>
+<p><strong>pass</strong></p>
 </div>
 
 

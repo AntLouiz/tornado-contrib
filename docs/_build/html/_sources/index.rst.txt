@@ -34,6 +34,11 @@ Criando o Model
 .. _schematics.models.BaseType: https://schematics.readthedocs.io/en/latest/usage/models.html
 .. _Types: https://schematics.readthedocs.io/en/latest/usage/types.html
 .. _`schematics.models.ModelType`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`MotorCollection`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`ModelManager`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`MotorDatabase`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`ModelAPIView`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`MotorModel`: https://schematics.readthedocs.io/en/latest/usage/models.html
 
 Para criar um model utilize a classe MotorModel.
     * Todos os models tem como base de herança o `schematics.modes.Model`_.
@@ -131,7 +136,7 @@ O doumento **Order** ficará dessa forma:
 
 .. code-block:: python
 
-    {"user": {"username": "John"}}
+    {"user": {"username": "John"}, "price": 1200}
 
 Many-to-many relationships
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -160,12 +165,121 @@ O resultado desse relacionamento criará um documento dessa forma:
 
     {"pizza": [{"name": "Hot sauce"}, {"name": "Tomato sauce"}]}
 
-Criando o ModelView
-===================
 
-Criando o modelview
+Classe interna **Meta**
+-----------------------
+
+Esta classe é obrigatória no momento da construção do model, pois adiciona metadados para que
+se possa definir qual collection o model irá lidar. O campo **collection_name** é responsável
+por informar a descrição da collection do model no banco de dados MongodBD.
+
+Example:
+
+.. code-block:: python
+    :emphasize-lines: 7,8
+
+    from contrib.base.models import MotorModel
+    from contrib.base import fields
+
+    class Car(MotorModel):
+        name = fields.StringType()
+
+        class Meta:
+            collection_name = 'cars'
+
+
+Attributos do **Model**
+-----------------------
+
+**manager**
+^^^^^^^^^^^
+
+O atributo mais importante do model é o `ModelManager`_. O manager é uma interface responsável
+por fazer as operações de banco de dados.
+
+
+**collection**
+^^^^^^^^^^^^^^
+
+Um objeto `MotorCollection`_.
+
+
+Parâmetros do **Model**
+-----------------------
+
+O model necessita como parâmetro obrigatório uma instância de um `MotorDatabase`_ para que
+seja possível a comunicação com o banco de dados.
+
+Como geralmente os models são utilizados dentro de handlers, de acordo com a utilização
+do Motor com o Tornado, faça da seguinte forma:
+
+.. code-block:: python
+    :emphasize-lines: 9,10
+
+    class Car(MotorModel):
+        name = fields.StringType()
+
+        class Meta:
+            collection_name = 'cars'
+
+    class CarsHandler(tornado.web.RequestHandler):
+        def get(self):
+            db = self.settings['db']
+            model = Car(db)
+
+
+
+Criando o ModelAPIView
+======================
+
+
+Esta biblioteca possibilita a criação de API's REST baseados em classes, utilizando modelos definidos
+com a classe `MotorModel`_.
+
+Todas os handlers, herdam da classe `ModelAPIView`_, todas as requisições são roteadas
+para os seus respectivos métodos, por exemplo, uma requisição do tipo POST, será roteada para o método
+**.post()**.
+
+Os handlers `ModelAPIView`_ recebem um importante attributo denomidado **model**.
+
+Por exemplo:
+
+.. code-block:: python
+
+    from contrib.handlers import ModelAPIView
+
+    class PersonAPIHandler(ModelAPIView):
+        model = Person
+
+O ModelAPIView já implementa todos os métodos de uma API REST, tornando muito mais rápido e fácil
+criar endpoints de um modelo.
+Para customizar algum método por exemplo, o método de listagem, faça o seguinte:
+
+.. code-block:: python
+
+    from contrib.handlers import ModelAPIView
+
+    class PersonAPIHandler(ModelAPIView):
+        model = Person
+
+        def list(self, *args, **kwargs):
+            queryset = await self.get_queryset()
+            response = self.process_response(queryset)
+            response = self.paginate_response(queryset)
+            return response
+
+
+Attributos do ModelAPIView
+--------------------------
+
+A
+
+Métodos do ModelAPIView
+-----------------------
+
+A
 
 Utilizando com Tornado
 ======================
 
-Exemplos
+**pass**
