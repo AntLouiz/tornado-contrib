@@ -11,6 +11,8 @@ Welcome to tornado_contrib's documentation!
    :caption: Contents:
 
 
+* :ref:`modules`
+
 
 Indices and tables
 ==================
@@ -39,6 +41,10 @@ Criando o Model
 .. _`MotorDatabase`: https://schematics.readthedocs.io/en/latest/usage/models.html
 .. _`ModelAPIView`: https://schematics.readthedocs.io/en/latest/usage/models.html
 .. _`MotorModel`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`Paginator`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`BaseAuthentication`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`BasePermission`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`Schematics roles`: https://schematics.readthedocs.io/en/latest/usage/models.html
 
 Para criar um model utilize a classe MotorModel.
     * Todos os models tem como base de herança o `schematics.modes.Model`_.
@@ -240,6 +246,10 @@ Todas os handlers, herdam da classe `ModelAPIView`_, todas as requisições são
 para os seus respectivos métodos, por exemplo, uma requisição do tipo POST, será roteada para o método
 **.post()**.
 
+O método HTTP GET se divide em dois métodos, o **.list()** e o **.retrieve()**.
+O método **.list()** faz uma listagem paginada de todos os dados no banco, já o retrieve
+recebe como argumento o id do objeto para a pesquisa no banco de dados.
+
 Os handlers `ModelAPIView`_ recebem um importante attributo denomidado **model**.
 
 Por exemplo:
@@ -272,12 +282,61 @@ Para customizar algum método por exemplo, o método de listagem, faça o seguin
 Attributos do ModelAPIView
 --------------------------
 
-A
+.model
+^^^^^^
+É um atributo que informa qual o modelo que essa view está manipulando, para que
+possa fazer a serialização e queries no banco de dados.
+
+.lookup_field
+^^^^^^^^^^^^^
+
+É um atributo que informa qual a campo do modelo o manager irá buscar no banco de dados como chave de busca,
+por padrão o campo é o **_id**.
+
+.lookup_url_kwarg
+^^^^^^^^^^^^^^^^^
+
+É um atributo que informa o nome do argumento que será roteado da url para os métodos da view.
+Por padrão o campo é o **id**.
+
+.page_size
+^^^^^^^^^^
+É um atributo que informa qual a quantidades de objetos que o método de paginação irá paginar. Por
+padrão a quantidade é de 50 objetos.
+
+.pagination_class
+^^^^^^^^^^^^^^^^^
+
+É um atributo que informa a classe de Paginação, todas as classes de paginação devem herdar de `Paginator`_.
+
+
+.authentication_class
+^^^^^^^^^^^^^^^^^^^^^
+
+É um atributo que informa a classe de autenticação, todas as classes de autenticação devem herdar de `BaseAuthentication`_.
+
+.permissions_classes
+^^^^^^^^^^^^^^^^^^^^
+
+É um atributo que informa a classe de permissões, todas as classes de permissões devem herdar de `BasePermission`_.
+
+.search_fields
+^^^^^^^^^^^^^^
+
+É um atributo que informa quais campos serão adicionados na query de pesquisa geral, comumente utilizado com o query parameter
+**?search=**.
+
+.view_role
+^^^^^^^^^^
+
+É um atributo que informa qual a role que os modelos serão serializados, para mais informações de roles, visite `Schematics roles`_
+
 
 Métodos do ModelAPIView
 -----------------------
 
-A
+**pass**
+
 
 Utilizando com Tornado
 ======================

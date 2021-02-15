@@ -34,6 +34,9 @@
 <h1>Welcome to tornado_contrib’s documentation!<a class="headerlink" href="#welcome-to-tornado-contrib-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
+<ul class="simple">
+<li><p><span class="xref std std-ref">modules</span></p></li>
+</ul>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -212,6 +215,9 @@ com a classe <a class="reference external" href="https://schematics.readthedocs.
 <p>Todas os handlers, herdam da classe <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">ModelAPIView</a>, todas as requisições são roteadas
 para os seus respectivos métodos, por exemplo, uma requisição do tipo POST, será roteada para o método
 <strong>.post()</strong>.</p>
+<p>O método HTTP GET se divide em dois métodos, o <strong>.list()</strong> e o <strong>.retrieve()</strong>.
+O método <strong>.list()</strong> faz uma listagem paginada de todos os dados no banco, já o retrieve
+recebe como argumento o id do objeto para a pesquisa no banco de dados.</p>
 <p>Os handlers <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">ModelAPIView</a> recebem um importante attributo denomidado <strong>model</strong>.</p>
 <p>Por exemplo:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contrib.handlers</span> <span class="kn">import</span> <span class="n">ModelAPIView</span>
@@ -237,11 +243,51 @@ Para customizar algum método por exemplo, o método de listagem, faça o seguin
 </div>
 <div class="section" id="attributos-do-modelapiview">
 <h2>Attributos do ModelAPIView<a class="headerlink" href="#attributos-do-modelapiview" title="Permalink to this headline">¶</a></h2>
-<p>A</p>
+<div class="section" id="model">
+<h3>.model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa qual o modelo que essa view está manipulando, para que
+possa fazer a serialização e queries no banco de dados.</p>
+</div>
+<div class="section" id="lookup-field">
+<h3>.lookup_field<a class="headerlink" href="#lookup-field" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa qual a campo do modelo o manager irá buscar no banco de dados como chave de busca,
+por padrão o campo é o <strong>_id</strong>.</p>
+</div>
+<div class="section" id="lookup-url-kwarg">
+<h3>.lookup_url_kwarg<a class="headerlink" href="#lookup-url-kwarg" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa o nome do argumento que será roteado da url para os métodos da view.
+Por padrão o campo é o <strong>id</strong>.</p>
+</div>
+<div class="section" id="page-size">
+<h3>.page_size<a class="headerlink" href="#page-size" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa qual a quantidades de objetos que o método de paginação irá paginar. Por
+padrão a quantidade é de 50 objetos.</p>
+</div>
+<div class="section" id="pagination-class">
+<h3>.pagination_class<a class="headerlink" href="#pagination-class" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa a classe de Paginação, todas as classes de paginação devem herdar de <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">Paginator</a>.</p>
+</div>
+<div class="section" id="authentication-class">
+<h3>.authentication_class<a class="headerlink" href="#authentication-class" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa a classe de autenticação, todas as classes de autenticação devem herdar de <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">BaseAuthentication</a>.</p>
+</div>
+<div class="section" id="permissions-classes">
+<h3>.permissions_classes<a class="headerlink" href="#permissions-classes" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa a classe de permissões, todas as classes de permissões devem herdar de <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">BasePermission</a>.</p>
+</div>
+<div class="section" id="search-fields">
+<h3>.search_fields<a class="headerlink" href="#search-fields" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa quais campos serão adicionados na query de pesquisa geral, comumente utilizado com o query parameter
+<strong>?search=</strong>.</p>
+</div>
+<div class="section" id="view-role">
+<h3>.view_role<a class="headerlink" href="#view-role" title="Permalink to this headline">¶</a></h3>
+<p>É um atributo que informa qual a role que os modelos serão serializados, para mais informações de roles, visite <a class="reference external" href="https://schematics.readthedocs.io/en/latest/usage/models.html">Schematics roles</a></p>
+</div>
 </div>
 <div class="section" id="metodos-do-modelapiview">
 <h2>Métodos do ModelAPIView<a class="headerlink" href="#metodos-do-modelapiview" title="Permalink to this headline">¶</a></h2>
-<p>A</p>
+<p><strong>pass</strong></p>
 </div>
 </div>
 <div class="section" id="utilizando-com-tornado">
