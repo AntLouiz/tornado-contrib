@@ -335,8 +335,26 @@ padrão a quantidade é de 50 objetos.
 Métodos do ModelAPIView
 -----------------------
 
-**pass**
 
+.get_data(self, strict=False)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Busca os dados do request serializado de acordo com o model.
+
+.json_response(data={}, code=200)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Retorna um json para a requisição HTTP.
+
+.process_response(self, queryset, \*args, \*\*kwargs)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Transforma um objeto Queryset em um dicionário.
+
+.paginate_response(self, queryset, current_page=1, page_size=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Faz a paginação de um objeto Queryset e retorna um dicionário com as chaves **count**, **results**, **next**, **prev**.
 
 Utilizando com Tornado
 ======================

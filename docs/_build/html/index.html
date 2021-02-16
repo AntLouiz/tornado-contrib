@@ -34,9 +34,7 @@
 <h1>Welcome to tornado_contrib’s documentation!<a class="headerlink" href="#welcome-to-tornado-contrib-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<ul class="simple">
-<li><p><span class="xref std std-ref">modules</span></p></li>
-</ul>
+<p>modules</p>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -287,7 +285,22 @@ padrão a quantidade é de 50 objetos.</p>
 </div>
 <div class="section" id="metodos-do-modelapiview">
 <h2>Métodos do ModelAPIView<a class="headerlink" href="#metodos-do-modelapiview" title="Permalink to this headline">¶</a></h2>
-<p><strong>pass</strong></p>
+<div class="section" id="get-data-self-strict-false">
+<h3>.get_data(self, strict=False)<a class="headerlink" href="#get-data-self-strict-false" title="Permalink to this headline">¶</a></h3>
+<p>Busca os dados do request serializado de acordo com o model.</p>
+</div>
+<div class="section" id="json-response-data-code-200">
+<h3>.json_response(data={}, code=200)<a class="headerlink" href="#json-response-data-code-200" title="Permalink to this headline">¶</a></h3>
+<p>Retorna um json para a requisição HTTP.</p>
+</div>
+<div class="section" id="process-response-self-queryset-args-kwargs">
+<h3>.process_response(self, queryset, *args, **kwargs)<a class="headerlink" href="#process-response-self-queryset-args-kwargs" title="Permalink to this headline">¶</a></h3>
+<p>Transforma um objeto Queryset em um dicionário.</p>
+</div>
+<div class="section" id="paginate-response-self-queryset-current-page-1-page-size-none">
+<h3>.paginate_response(self, queryset, current_page=1, page_size=None)<a class="headerlink" href="#paginate-response-self-queryset-current-page-1-page-size-none" title="Permalink to this headline">¶</a></h3>
+<p>Faz a paginação de um objeto Queryset e retorna um dicionário com as chaves <strong>count</strong>, <strong>results</strong>, <strong>next</strong>, <strong>prev</strong>.</p>
+</div>
 </div>
 </div>
 <div class="section" id="utilizando-com-tornado">
