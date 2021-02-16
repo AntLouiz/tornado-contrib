@@ -1,4 +1,4 @@
-# Tornado Contrib
+# Tornado + MongoDB Contrib
 
 Uma série de classes que ajudam a escrever API's utilizando views baseadas em classes  para projetos com Tornado + MongoDB.
 
