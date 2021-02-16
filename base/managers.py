@@ -14,7 +14,8 @@ class Queryset:
         return self._value
 
     def __repr__(self):
-        return f'<Queryset ({len(self._value)} of {self.total})>'
+        value_count = len(self._value) if self.total > 1 else self.total
+        return f'<Queryset ({value_count} of {self.total})>'
 
 class MotorModelManager:
     skip = None
