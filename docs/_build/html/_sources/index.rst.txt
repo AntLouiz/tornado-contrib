@@ -355,8 +355,3 @@ Transforma um objeto Queryset em um dicionário.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Faz a paginação de um objeto Queryset e retorna um dicionário com as chaves **count**, **results**, **next**, **prev**.
-
-Utilizando com Tornado
-======================
-
-**pass**
